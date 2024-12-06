@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
 import org.apache.cassandra.sidecar.concurrent.TaskExecutorPool;
@@ -67,10 +67,10 @@ public class CdcLogCache
 
     @Inject
     public CdcLogCache(ExecutorPools executorPools,
-                       InstancesConfig instancesConfig,
+                       InstancesMetadata instancesMetadata,
                        SidecarConfiguration sidecarConfig)
     {
-        this(executorPools, instancesConfig,
+        this(executorPools, instancesMetadata,
              TimeUnit.SECONDS.toMillis(sidecarConfig.serviceConfiguration()
                                                     .cdcConfiguration()
                                                     .segmentHardlinkCacheExpiryInSecs()));
@@ -78,7 +78,7 @@ public class CdcLogCache
 
     @VisibleForTesting
     CdcLogCache(ExecutorPools executorPools,
-                InstancesConfig instancesConfig,
+                InstancesMetadata instancesMetadata,
                 long cacheExpiryInMillis)
     {
         this.cacheExpiryInMillis = cacheExpiryInMillis;
@@ -88,7 +88,7 @@ public class CdcLogCache
                                          .removalListener(hardlinkRemover)
                                          .build();
         // Run cleanup in the internal pool to mute any exceptions. The cleanup is best-effort.
-        internalExecutorPool.runBlocking(() -> cleanupLinkedFilesOnStartup(instancesConfig));
+        internalExecutorPool.runBlocking(() -> cleanupLinkedFilesOnStartup(instancesMetadata));
     }
 
     public void initMaybe()
@@ -150,7 +150,7 @@ public class CdcLogCache
      * @param config instances config
      */
     @VisibleForTesting
-    public void cleanupLinkedFilesOnStartup(InstancesConfig config)
+    public void cleanupLinkedFilesOnStartup(InstancesMetadata config)
     {
         for (InstanceMetadata instance : config.instances())
         {

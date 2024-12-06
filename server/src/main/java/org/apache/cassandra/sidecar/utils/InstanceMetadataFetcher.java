@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,12 +34,12 @@ import org.jetbrains.annotations.Nullable;
 @Singleton
 public class InstanceMetadataFetcher
 {
-    private final InstancesConfig instancesConfig;
+    private final InstancesMetadata instancesMetadata;
 
     @Inject
-    public InstanceMetadataFetcher(InstancesConfig instancesConfig)
+    public InstanceMetadataFetcher(InstancesMetadata instancesMetadata)
     {
-        this.instancesConfig = instancesConfig;
+        this.instancesMetadata = instancesMetadata;
     }
 
     /**
@@ -54,7 +54,7 @@ public class InstanceMetadataFetcher
     {
         return host == null
                ? firstInstance()
-               : instancesConfig.instanceFromHost(host);
+               : instancesMetadata.instanceFromHost(host);
     }
 
     /**
@@ -67,7 +67,7 @@ public class InstanceMetadataFetcher
      */
     public InstanceMetadata instance(int instanceId)
     {
-        return instancesConfig.instanceFromId(instanceId);
+        return instancesMetadata.instanceFromId(instanceId);
     }
 
     /**
@@ -103,7 +103,7 @@ public class InstanceMetadataFetcher
     public InstanceMetadata firstInstance()
     {
         ensureInstancesConfigured();
-        return instancesConfig.instances().get(0);
+        return instancesMetadata.instances().get(0);
     }
 
     /**
@@ -113,7 +113,7 @@ public class InstanceMetadataFetcher
     public InstanceMetadata anyInstance()
     {
         ensureInstancesConfigured();
-        List<InstanceMetadata> instances = instancesConfig.instances();
+        List<InstanceMetadata> instances = instancesMetadata.instances();
         if (instances.size() == 1)
         {
             return instances.get(0);
@@ -125,7 +125,7 @@ public class InstanceMetadataFetcher
 
     private void ensureInstancesConfigured()
     {
-        if (instancesConfig.instances().isEmpty())
+        if (instancesMetadata.instances().isEmpty())
         {
             throw new IllegalStateException("There are no instances configured!");
         }

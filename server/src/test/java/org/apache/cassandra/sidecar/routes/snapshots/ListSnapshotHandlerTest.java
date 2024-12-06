@@ -49,7 +49,7 @@ import io.vertx.junit5.VertxTestContext;
 import org.apache.cassandra.sidecar.TestModule;
 import org.apache.cassandra.sidecar.cluster.CQLSessionProviderImpl;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.common.response.ListSnapshotFilesResponse;
 import org.apache.cassandra.sidecar.common.server.CQLSessionProvider;
 import org.apache.cassandra.sidecar.common.server.TableOperations;
@@ -256,7 +256,7 @@ class ListSnapshotHandlerTest
     {
         @Provides
         @Singleton
-        public InstancesConfig instancesConfig(Vertx vertx) throws IOException
+        public InstancesMetadata instancesConfig(Vertx vertx) throws IOException
         {
             CQLSessionProvider mockSession1 = mock(CQLSessionProviderImpl.class);
             TableOperations mockTableOperations = mock(TableOperations.class);

@@ -49,7 +49,7 @@ import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.apache.cassandra.sidecar.TestModule;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.server.CQLSessionProvider;
 import org.apache.cassandra.sidecar.coordination.ClusterLease;
@@ -254,15 +254,15 @@ public class SidecarSchemaTest
 
         @Provides
         @Singleton
-        public InstancesConfig instancesConfig()
+        public InstancesMetadata instancesConfig()
         {
             InstanceMetadata instanceMeta = mock(InstanceMetadata.class);
             when(instanceMeta.stagingDir()).thenReturn("/tmp/staging"); // not an actual file
-            InstancesConfig instancesConfig = mock(InstancesConfig.class);
-            when(instancesConfig.instances()).thenReturn(Collections.singletonList(instanceMeta));
-            when(instancesConfig.instanceFromHost(any())).thenReturn(instanceMeta);
-            when(instancesConfig.instanceFromId(anyInt())).thenReturn(instanceMeta);
-            return instancesConfig;
+            InstancesMetadata instancesMetadata = mock(InstancesMetadata.class);
+            when(instancesMetadata.instances()).thenReturn(Collections.singletonList(instanceMeta));
+            when(instancesMetadata.instanceFromHost(any())).thenReturn(instanceMeta);
+            when(instancesMetadata.instanceFromId(anyInt())).thenReturn(instanceMeta);
+            return instancesMetadata;
         }
 
         @Provides

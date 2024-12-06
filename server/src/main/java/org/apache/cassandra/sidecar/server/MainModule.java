@@ -56,8 +56,8 @@ import org.apache.cassandra.sidecar.adapters.base.CassandraFactory;
 import org.apache.cassandra.sidecar.adapters.cassandra41.Cassandra41Factory;
 import org.apache.cassandra.sidecar.cluster.CQLSessionProviderImpl;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
-import org.apache.cassandra.sidecar.cluster.InstancesConfigImpl;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadataImpl;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadataImpl;
 import org.apache.cassandra.sidecar.cluster.locator.CachedLocalTokenRanges;
@@ -494,14 +494,14 @@ public class MainModule extends AbstractModule
 
     @Provides
     @Singleton
-    public InstancesConfig instancesConfig(Vertx vertx,
-                                           SidecarConfiguration configuration,
-                                           CassandraVersionProvider cassandraVersionProvider,
-                                           SidecarVersionProvider sidecarVersionProvider,
-                                           DnsResolver dnsResolver,
-                                           CQLSessionProvider cqlSessionProvider,
-                                           DriverUtils driverUtils,
-                                           MetricRegistryFactory registryProvider)
+    public InstancesMetadata instancesConfig(Vertx vertx,
+                                             SidecarConfiguration configuration,
+                                             CassandraVersionProvider cassandraVersionProvider,
+                                             SidecarVersionProvider sidecarVersionProvider,
+                                             DnsResolver dnsResolver,
+                                             CQLSessionProvider cqlSessionProvider,
+                                             DriverUtils driverUtils,
+                                             MetricRegistryFactory registryProvider)
     {
         List<InstanceMetadata> instanceMetadataList =
         configuration.cassandraInstances()
@@ -519,7 +519,7 @@ public class MainModule extends AbstractModule
                      })
                      .collect(Collectors.toList());
 
-        return new InstancesConfigImpl(instanceMetadataList, dnsResolver);
+        return new InstancesMetadataImpl(instanceMetadataList, dnsResolver);
     }
 
     @Provides
@@ -675,9 +675,9 @@ public class MainModule extends AbstractModule
 
     @Provides
     @Singleton
-    public LocalTokenRangesProvider localTokenRangesProvider(InstancesConfig instancesConfig, DnsResolver dnsResolver)
+    public LocalTokenRangesProvider localTokenRangesProvider(InstancesMetadata instancesMetadata, DnsResolver dnsResolver)
     {
-        return new CachedLocalTokenRanges(instancesConfig, dnsResolver);
+        return new CachedLocalTokenRanges(instancesMetadata, dnsResolver);
     }
 
     @Provides

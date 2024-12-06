@@ -39,7 +39,7 @@ import org.junit.jupiter.api.io.TempDir;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxTestContext;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
 import org.apache.cassandra.sidecar.config.ServiceConfiguration;
@@ -71,20 +71,20 @@ public abstract class AbstractSnapshotPathBuilderTest
     {
         CassandraInputValidator validator = new CassandraInputValidator();
 
-        InstancesConfig mockInstancesConfig = mock(InstancesConfig.class);
+        InstancesMetadata mockInstancesMetadata = mock(InstancesMetadata.class);
         InstanceMetadata mockInstanceMeta = mock(InstanceMetadata.class);
         InstanceMetadata mockInvalidDataDirInstanceMeta = mock(InstanceMetadata.class);
         InstanceMetadata mockEmptyDataDirInstanceMeta = mock(InstanceMetadata.class);
 
-        when(mockInstancesConfig.instanceFromHost("localhost")).thenReturn(mockInstanceMeta);
+        when(mockInstancesMetadata.instanceFromHost("localhost")).thenReturn(mockInstanceMeta);
         when(mockInstanceMeta.dataDirs()).thenReturn(Arrays.asList(dataDir0.getAbsolutePath(),
                                                                    dataDir1.getAbsolutePath()));
 
-        when(mockInstancesConfig.instanceFromHost("invalidDataDirInstance")).thenReturn(mockInvalidDataDirInstanceMeta);
+        when(mockInstancesMetadata.instanceFromHost("invalidDataDirInstance")).thenReturn(mockInvalidDataDirInstanceMeta);
         String invalidDirPath = dataDir0.getParentFile().getAbsolutePath() + "/invalid-data-dir";
         when(mockInvalidDataDirInstanceMeta.dataDirs()).thenReturn(Collections.singletonList(invalidDirPath));
 
-        when(mockInstancesConfig.instanceFromHost("emptyDataDirInstance")).thenReturn(mockEmptyDataDirInstanceMeta);
+        when(mockInstancesMetadata.instanceFromHost("emptyDataDirInstance")).thenReturn(mockEmptyDataDirInstanceMeta);
         when(mockEmptyDataDirInstanceMeta.dataDirs()).thenReturn(Collections.emptyList());
 
         // Create some files and directories
@@ -165,7 +165,7 @@ public abstract class AbstractSnapshotPathBuilderTest
         ServiceConfiguration serviceConfiguration = new ServiceConfigurationImpl();
         executorPools = new ExecutorPools(vertx, serviceConfiguration);
 
-        instance = initialize(vertx, serviceConfiguration, mockInstancesConfig, validator, executorPools);
+        instance = initialize(vertx, serviceConfiguration, mockInstancesMetadata, validator, executorPools);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -178,7 +178,7 @@ public abstract class AbstractSnapshotPathBuilderTest
 
     protected abstract SnapshotPathBuilder initialize(Vertx vertx,
                                                       ServiceConfiguration serviceConfiguration,
-                                                      InstancesConfig instancesConfig,
+                                                      InstancesMetadata instancesMetadata,
                                                       CassandraInputValidator validator,
                                                       ExecutorPools executorPools);
 

@@ -34,8 +34,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
-import org.apache.cassandra.sidecar.cluster.InstancesConfigImpl;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadataImpl;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.MockCassandraFactory;
 import org.apache.cassandra.sidecar.common.response.NodeSettings;
@@ -150,9 +150,9 @@ public class TestModule extends AbstractModule
 
     @Provides
     @Singleton
-    public InstancesConfig instancesConfig(DnsResolver dnsResolver)
+    public InstancesMetadata instancesConfig(DnsResolver dnsResolver)
     {
-        return new InstancesConfigImpl(instancesMetas(), dnsResolver);
+        return new InstancesMetadataImpl(instancesMetas(), dnsResolver);
     }
 
     @Provides

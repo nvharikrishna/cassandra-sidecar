@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import io.vertx.core.Future;
 import io.vertx.core.file.FileProps;
 import io.vertx.core.file.FileSystem;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
 
 /**
@@ -39,24 +39,24 @@ public class BaseFileSystem
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected final ExecutorPools executorPools;
     protected final FileSystem fs;
-    protected final InstancesConfig instancesConfig;
+    protected final InstancesMetadata instancesMetadata;
     protected final CassandraInputValidator validator;
 
     /**
      * Creates a new FileSystemUtils with the given {@code vertx} instance.
      *
      * @param fileSystem      async file system abstraction from vertx
-     * @param instancesConfig the configuration for Cassandra
+     * @param instancesMetadata the configuration for Cassandra
      * @param validator       validates cassandra related inputs
      * @param executorPools   executor pools for blocking executions
      */
     public BaseFileSystem(FileSystem fileSystem,
-                          InstancesConfig instancesConfig,
+                          InstancesMetadata instancesMetadata,
                           CassandraInputValidator validator,
                           ExecutorPools executorPools)
     {
         this.fs = fileSystem;
-        this.instancesConfig = instancesConfig;
+        this.instancesMetadata = instancesMetadata;
         this.validator = validator;
         this.executorPools = executorPools;
     }
@@ -67,7 +67,7 @@ public class BaseFileSystem
      */
     protected Future<List<String>> dataDirectories(String host)
     {
-        List<String> dataDirs = instancesConfig.instanceFromHost(host).dataDirs();
+        List<String> dataDirs = instancesMetadata.instanceFromHost(host).dataDirs();
         if (dataDirs == null || dataDirs.isEmpty())
         {
             String errMsg = String.format("No data directories are available for host '%s'", host);

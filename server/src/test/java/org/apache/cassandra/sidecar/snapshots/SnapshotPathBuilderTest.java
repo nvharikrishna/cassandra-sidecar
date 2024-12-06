@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
 import org.apache.cassandra.sidecar.config.ServiceConfiguration;
 import org.apache.cassandra.sidecar.utils.CassandraInputValidator;
@@ -32,9 +32,9 @@ class SnapshotPathBuilderTest extends AbstractSnapshotPathBuilderTest
 {
     @Override
     public SnapshotPathBuilder initialize(Vertx vertx, ServiceConfiguration serviceConfiguration,
-                                          InstancesConfig instancesConfig,
+                                          InstancesMetadata instancesMetadata,
                                           CassandraInputValidator validator, ExecutorPools executorPools)
     {
-        return new SnapshotPathBuilder(vertx, instancesConfig, validator, executorPools);
+        return new SnapshotPathBuilder(vertx, instancesMetadata, validator, executorPools);
     }
 }

@@ -36,7 +36,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.common.utils.Preconditions;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
 import org.apache.cassandra.sidecar.routes.data.StreamSSTableComponentRequestParam;
@@ -58,17 +58,17 @@ public class SnapshotPathBuilder extends BaseFileSystem
      * {@code instancesConfig Cassandra configuration}.
      *
      * @param vertx           the vertx instance
-     * @param instancesConfig the configuration for Cassandra
+     * @param instancesMetadata the configuration for Cassandra
      * @param validator       a validator instance to validate Cassandra-specific input
      * @param executorPools   executor pools for blocking executions
      */
     @Inject
     public SnapshotPathBuilder(Vertx vertx,
-                               InstancesConfig instancesConfig,
+                               InstancesMetadata instancesMetadata,
                                CassandraInputValidator validator,
                                ExecutorPools executorPools)
     {
-        super(vertx.fileSystem(), instancesConfig, validator, executorPools);
+        super(vertx.fileSystem(), instancesMetadata, validator, executorPools);
     }
 
     /**

@@ -34,7 +34,7 @@ import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
 import org.apache.cassandra.sidecar.config.HealthCheckConfiguration;
@@ -62,7 +62,7 @@ class HealthCheckPeriodicTaskTest
     SidecarConfiguration mockConfiguration;
     HealthCheckConfiguration mockHealthCheckConfiguration;
     HealthCheckPeriodicTask healthCheck;
-    InstancesConfig mockInstancesConfig;
+    InstancesMetadata mockInstancesMetadata;
     SidecarMetrics metrics;
 
     @BeforeEach
@@ -74,7 +74,7 @@ class HealthCheckPeriodicTaskTest
         when(mockHealthCheckConfiguration.initialDelayMillis()).thenReturn(10);
         when(mockHealthCheckConfiguration.checkIntervalMillis()).thenReturn(1000);
 
-        mockInstancesConfig = mock(InstancesConfig.class);
+        mockInstancesMetadata = mock(InstancesMetadata.class);
 
         Vertx vertx = Vertx.vertx();
         MetricRegistryFactory mockRegistryFactory = mock(MetricRegistryFactory.class);
@@ -82,7 +82,7 @@ class HealthCheckPeriodicTaskTest
         InstanceMetadataFetcher mockInstanceMetadataFetcher = mock(InstanceMetadataFetcher.class);
         metrics = new SidecarMetricsImpl(mockRegistryFactory, mockInstanceMetadataFetcher);
         ExecutorPools executorPools = new ExecutorPools(vertx, new ServiceConfigurationImpl());
-        healthCheck = new HealthCheckPeriodicTask(vertx, mockConfiguration, mockInstancesConfig,
+        healthCheck = new HealthCheckPeriodicTask(vertx, mockConfiguration, mockInstancesMetadata,
                                                   executorPools, metrics);
     }
 
@@ -106,7 +106,7 @@ class HealthCheckPeriodicTaskTest
         int expectedUpInstances = 0;
         int expectedDownInstances = 0;
         List<InstanceMetadata> mockInstanceMetadata = Collections.emptyList();
-        when(mockInstancesConfig.instances()).thenReturn(mockInstanceMetadata);
+        when(mockInstancesMetadata.instances()).thenReturn(mockInstanceMetadata);
         Promise<Void> promise = Promise.promise();
         healthCheck.execute(promise);
         promise.future().onComplete(context.succeeding(v -> {
@@ -125,7 +125,7 @@ class HealthCheckPeriodicTaskTest
         Checkpoint healthCheckCheckPoint = context.checkpoint(numberOfInstances);
         List<InstanceMetadata> mockInstanceMetadata =
         buildMockInstanceMetadata(healthCheckCheckPoint, numberOfInstances);
-        when(mockInstancesConfig.instances()).thenReturn(mockInstanceMetadata);
+        when(mockInstancesMetadata.instances()).thenReturn(mockInstanceMetadata);
         Promise<Void> promise = Promise.promise();
         healthCheck.execute(promise);
         promise.future().onComplete(context.succeeding(v -> {
@@ -147,7 +147,7 @@ class HealthCheckPeriodicTaskTest
         InstanceMetadata mockInstance = mock(InstanceMetadata.class);
         when(mockInstance.delegate()).thenThrow(new RuntimeException());
         mockInstanceMetadata.set(3, mockInstance);
-        when(mockInstancesConfig.instances()).thenReturn(mockInstanceMetadata);
+        when(mockInstancesMetadata.instances()).thenReturn(mockInstanceMetadata);
         Promise<Void> promise = Promise.promise();
         healthCheck.execute(promise);
         promise.future().onComplete(context.failing(v -> {
@@ -171,7 +171,7 @@ class HealthCheckPeriodicTaskTest
         when(mockInstance.delegate()).thenReturn(mockDelegate);
         doThrow(new RuntimeException()).when(mockDelegate).healthCheck();
         mockInstanceMetadata.set(3, mockInstance);
-        when(mockInstancesConfig.instances()).thenReturn(mockInstanceMetadata);
+        when(mockInstancesMetadata.instances()).thenReturn(mockInstanceMetadata);
         Promise<Void> promise = Promise.promise();
         healthCheck.execute(promise);
         promise.future().onComplete(context.failing(v -> {

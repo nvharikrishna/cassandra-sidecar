@@ -50,7 +50,7 @@ import io.vertx.ext.web.codec.BodyCodec;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.apache.cassandra.sidecar.TestModule;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.data.RestoreJobSecrets;
 import org.apache.cassandra.sidecar.common.request.data.CreateRestoreJobRequestPayload;
@@ -338,14 +338,14 @@ public abstract class BaseRestoreJobTests
             ThrowableFunction<String, RestoreJobProgressTracker.Status, RestoreJobFatalException> submitFunc;
 
             public TestRestoreJobManagerGroup(SidecarConfiguration configuration,
-                                              InstancesConfig instancesConfig,
+                                              InstancesMetadata instancesMetadata,
                                               ExecutorPools executorPools,
                                               PeriodicTaskExecutor periodicTaskExecutor,
                                               RestoreProcessor restoreProcessor,
                                               RestoreJobDiscoverer jobDiscoverer,
                                               RingTopologyRefresher ringTopologyRefresher)
             {
-                super(configuration, instancesConfig, executorPools, periodicTaskExecutor, restoreProcessor,
+                super(configuration, instancesMetadata, executorPools, periodicTaskExecutor, restoreProcessor,
                       jobDiscoverer, ringTopologyRefresher);
             }
 
@@ -398,7 +398,7 @@ public abstract class BaseRestoreJobTests
         @Provides
         @Singleton
         public RestoreJobManagerGroup restoreJobManagerGroup(SidecarConfiguration configuration,
-                                                             InstancesConfig instancesConfig,
+                                                             InstancesMetadata instancesMetadata,
                                                              ExecutorPools executorPools,
                                                              PeriodicTaskExecutor loopExecutor,
                                                              RestoreProcessor restoreProcessor,
@@ -406,7 +406,7 @@ public abstract class BaseRestoreJobTests
                                                              RingTopologyRefresher ringTopologyRefresher)
         {
             return new TestRestoreJobManagerGroup(configuration,
-                                                  instancesConfig,
+                                                  instancesMetadata,
                                                   executorPools,
                                                   loopExecutor,
                                                   restoreProcessor,

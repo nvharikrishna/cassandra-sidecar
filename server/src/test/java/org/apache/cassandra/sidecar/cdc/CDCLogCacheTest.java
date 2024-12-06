@@ -32,7 +32,7 @@ import com.google.inject.util.Modules;
 import io.vertx.core.Vertx;
 import org.apache.cassandra.sidecar.ExecutorPoolsHelper;
 import org.apache.cassandra.sidecar.TestModule;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
 import org.apache.cassandra.sidecar.config.SidecarConfiguration;
 import org.apache.cassandra.sidecar.server.MainModule;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 class CdcLogCacheTest
 {
     private final Injector injector = Guice.createInjector(Modules.override(new MainModule()).with(new TestModule()));
-    private final InstancesConfig instancesConfig = injector.getInstance(InstancesConfig.class);
+    private final InstancesMetadata instancesMetadata = injector.getInstance(InstancesMetadata.class);
     private final CdcLogCache logCache = cdcLogCache();
 
     @BeforeEach
@@ -78,7 +78,7 @@ class CdcLogCacheTest
         assertThat(linkedFile.exists()).isTrue();
 
         // Verify that cleanup deletes the linked file
-        logCache.cleanupLinkedFilesOnStartup(instancesConfig);
+        logCache.cleanupLinkedFilesOnStartup(instancesMetadata);
         assertThat(linkedFile.exists()).isFalse();
     }
 
@@ -103,20 +103,20 @@ class CdcLogCacheTest
     void testCleanupErrorDoesntPreventInitialization()
     {
         assertThatNoException().isThrownBy(() -> {
-            new FailingCdcLogCache(ExecutorPoolsHelper.createdSharedTestPool(Vertx.vertx()), instancesConfig, sidecarConfiguration());
+            new FailingCdcLogCache(ExecutorPoolsHelper.createdSharedTestPool(Vertx.vertx()), instancesMetadata, sidecarConfiguration());
         });
     }
 
     private File instance1CommitLogFile()
     {
-        String commitLogPathOnInstance1 = instancesConfig.instances().get(0).cdcDir() + "/CommitLog-1-1.log";
+        String commitLogPathOnInstance1 = instancesMetadata.instances().get(0).cdcDir() + "/CommitLog-1-1.log";
         return new File(commitLogPathOnInstance1);
     }
 
     private CdcLogCache cdcLogCache()
     {
         ExecutorPools executorPools = ExecutorPoolsHelper.createdSharedTestPool(Vertx.vertx());
-        return new CdcLogCache(executorPools, instancesConfig, 100L);
+        return new CdcLogCache(executorPools, instancesMetadata, 100L);
     }
 
     private SidecarConfiguration sidecarConfiguration()
@@ -128,13 +128,13 @@ class CdcLogCacheTest
 
     static class FailingCdcLogCache extends CdcLogCache
     {
-        public FailingCdcLogCache(ExecutorPools executorPools, InstancesConfig cassandraConfig, SidecarConfiguration sidecarConfig)
+        public FailingCdcLogCache(ExecutorPools executorPools, InstancesMetadata cassandraConfig, SidecarConfiguration sidecarConfig)
         {
             super(executorPools, cassandraConfig, sidecarConfig);
         }
 
         @Override
-        public void cleanupLinkedFilesOnStartup(InstancesConfig config)
+        public void cleanupLinkedFilesOnStartup(InstancesMetadata config)
         {
             // Fake an error to simulate the initialization issue
             Preconditions.checkState(false, "cdc_raw_tmp should be a directory");

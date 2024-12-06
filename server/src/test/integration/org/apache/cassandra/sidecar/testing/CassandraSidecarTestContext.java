@@ -40,8 +40,8 @@ import org.apache.cassandra.sidecar.adapters.base.CassandraFactory;
 import org.apache.cassandra.sidecar.adapters.cassandra41.Cassandra41Factory;
 import org.apache.cassandra.sidecar.cluster.CQLSessionProviderImpl;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
-import org.apache.cassandra.sidecar.cluster.InstancesConfigImpl;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadataImpl;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadataImpl;
 import org.apache.cassandra.sidecar.common.server.CQLSessionProvider;
@@ -73,7 +73,7 @@ public class CassandraSidecarTestContext implements AutoCloseable
     private final Vertx vertx;
     private final List<InstanceConfigListener> instanceConfigListeners;
     private int numInstancesToManage;
-    public InstancesConfig instancesConfig;
+    public InstancesMetadata instancesMetadata;
     private List<JmxClient> jmxClients;
     private CQLSessionProvider sessionProvider;
     private String username = "cassandra";
@@ -183,21 +183,21 @@ public class CassandraSidecarTestContext implements AutoCloseable
         refreshInstancesConfig();
     }
 
-    public InstancesConfig instancesConfig()
+    public InstancesMetadata instancesConfig()
     {
-        if (instancesConfig == null)
+        if (instancesMetadata == null)
         {
             refreshInstancesConfig();
         }
-        return this.instancesConfig;
+        return this.instancesMetadata;
     }
 
-    public InstancesConfig refreshInstancesConfig()
+    public InstancesMetadata refreshInstancesConfig()
     {
         // clean-up any open sessions or client resources
         close();
         setInstancesConfig();
-        return this.instancesConfig;
+        return this.instancesMetadata;
     }
 
     public Session session()
@@ -227,23 +227,23 @@ public class CassandraSidecarTestContext implements AutoCloseable
     @Override
     public void close()
     {
-        if (instancesConfig != null)
+        if (instancesMetadata != null)
         {
-            instancesConfig.instances().forEach(instance -> instance.delegate().close());
+            instancesMetadata.instances().forEach(instance -> instance.delegate().close());
         }
     }
 
     private void setInstancesConfig()
     {
-        this.instancesConfig = buildInstancesConfig(versionProvider, dnsResolver);
+        this.instancesMetadata = buildInstancesConfig(versionProvider, dnsResolver);
         for (InstanceConfigListener listener : instanceConfigListeners)
         {
-            listener.onInstancesConfigChange(this.instancesConfig);
+            listener.onInstancesConfigChange(this.instancesMetadata);
         }
     }
 
-    private InstancesConfig buildInstancesConfig(CassandraVersionProvider versionProvider,
-                                                 DnsResolver dnsResolver)
+    private InstancesMetadata buildInstancesConfig(CassandraVersionProvider versionProvider,
+                                                   DnsResolver dnsResolver)
     {
         UpgradeableCluster cluster = cluster();
         List<InstanceMetadata> metadata = new ArrayList<>();
@@ -301,7 +301,7 @@ public class CassandraSidecarTestContext implements AutoCloseable
                                              .metricRegistry(instanceSpecificRegistry)
                                              .build());
         }
-        return new InstancesConfigImpl(metadata, dnsResolver);
+        return new InstancesMetadataImpl(metadata, dnsResolver);
     }
 
     private static List<InetSocketAddress> buildContactList(List<IInstanceConfig> configs)
@@ -340,10 +340,10 @@ public class CassandraSidecarTestContext implements AutoCloseable
     }
 
     /**
-     * A listener for {@link InstancesConfig} state changes
+     * A listener for {@link InstancesMetadata} state changes
      */
     public interface InstanceConfigListener
     {
-        void onInstancesConfigChange(InstancesConfig instancesConfig);
+        void onInstancesConfigChange(InstancesMetadata instancesMetadata);
     }
 }

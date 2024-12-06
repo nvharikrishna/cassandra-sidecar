@@ -31,8 +31,8 @@ import java.util.List;
 import io.vertx.core.Vertx;
 import org.apache.cassandra.sidecar.cluster.CQLSessionProviderImpl;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
-import org.apache.cassandra.sidecar.cluster.InstancesConfigImpl;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadataImpl;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadataImpl;
 import org.apache.cassandra.sidecar.common.MockCassandraFactory;
@@ -101,16 +101,16 @@ public class SnapshotUtils
                    .setLastModified(System.currentTimeMillis() + 2_000_000)).isTrue();
     }
 
-    public static InstancesConfig mockInstancesConfig(Vertx vertx, String rootPath)
+    public static InstancesMetadata mockInstancesConfig(Vertx vertx, String rootPath)
     {
         CQLSessionProvider mockSession1 = mock(CQLSessionProviderImpl.class);
         return mockInstancesConfig(vertx, rootPath, null, mockSession1);
     }
 
-    public static InstancesConfig mockInstancesConfig(Vertx vertx,
-                                                      String rootPath,
-                                                      CassandraAdapterDelegate delegate,
-                                                      CQLSessionProvider cqlSessionProvider1)
+    public static InstancesMetadata mockInstancesConfig(Vertx vertx,
+                                                        String rootPath,
+                                                        CassandraAdapterDelegate delegate,
+                                                        CQLSessionProvider cqlSessionProvider1)
     {
         CassandraVersionProvider.Builder versionProviderBuilder = new CassandraVersionProvider.Builder();
         versionProviderBuilder.add(new MockCassandraFactory());
@@ -144,7 +144,7 @@ public class SnapshotUtils
                                                               .metricRegistry(METRIC_REGISTRY_PROVIDER.getOrCreate(2))
                                                               .build();
         List<InstanceMetadata> instanceMetas = Arrays.asList(localhost, localhost2);
-        return new InstancesConfigImpl(instanceMetas, DnsResolver.DEFAULT);
+        return new InstancesMetadataImpl(instanceMetas, DnsResolver.DEFAULT);
     }
 
     public static List<String[]> mockSnapshotDirectories()

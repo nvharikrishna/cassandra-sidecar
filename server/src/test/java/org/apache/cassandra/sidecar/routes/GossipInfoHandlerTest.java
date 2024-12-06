@@ -43,7 +43,7 @@ import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.apache.cassandra.sidecar.TestModule;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.response.GossipInfoResponse;
 import org.apache.cassandra.sidecar.common.server.ClusterMembershipOperations;
@@ -122,7 +122,7 @@ public class GossipInfoHandlerTest
     {
         @Provides
         @Singleton
-        public InstancesConfig instanceConfig()
+        public InstancesMetadata instanceConfig()
         {
             final int instanceId = 100;
             final String host = "127.0.0.1";
@@ -137,12 +137,12 @@ public class GossipInfoHandlerTest
             when(delegate.clusterMembershipOperations()).thenReturn(ops);
             when(instanceMetadata.delegate()).thenReturn(delegate);
 
-            InstancesConfig mockInstancesConfig = mock(InstancesConfig.class);
-            when(mockInstancesConfig.instances()).thenReturn(Collections.singletonList(instanceMetadata));
-            when(mockInstancesConfig.instanceFromId(instanceId)).thenReturn(instanceMetadata);
-            when(mockInstancesConfig.instanceFromHost(host)).thenReturn(instanceMetadata);
+            InstancesMetadata mockInstancesMetadata = mock(InstancesMetadata.class);
+            when(mockInstancesMetadata.instances()).thenReturn(Collections.singletonList(instanceMetadata));
+            when(mockInstancesMetadata.instanceFromId(instanceId)).thenReturn(instanceMetadata);
+            when(mockInstancesMetadata.instanceFromHost(host)).thenReturn(instanceMetadata);
 
-            return mockInstancesConfig;
+            return mockInstancesMetadata;
         }
     }
 

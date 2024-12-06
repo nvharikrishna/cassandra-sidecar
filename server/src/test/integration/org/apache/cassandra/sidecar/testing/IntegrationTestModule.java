@@ -29,7 +29,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.server.CQLSessionProvider;
 import org.apache.cassandra.sidecar.config.AccessControlConfiguration;
@@ -82,9 +82,9 @@ public class IntegrationTestModule extends AbstractModule
 
     @Provides
     @Singleton
-    public InstancesConfig instancesConfig()
+    public InstancesMetadata instancesConfig()
     {
-        return new WrapperInstancesConfig();
+        return new WrapperInstancesMetadata();
     }
 
     @Provides
@@ -171,7 +171,7 @@ public class IntegrationTestModule extends AbstractModule
                                                   new CacheConfigurationImpl());
     }
 
-    class WrapperInstancesConfig implements InstancesConfig
+    class WrapperInstancesMetadata implements InstancesMetadata
     {
         /**
          * @return metadata of instances owned by the sidecar

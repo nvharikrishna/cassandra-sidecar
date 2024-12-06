@@ -62,7 +62,7 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.junit5.VertxTestContext;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.server.data.Name;
 import org.apache.cassandra.sidecar.common.server.data.QualifiedTableName;
@@ -391,10 +391,10 @@ public abstract class IntegrationTestBase
         }
     }
 
-    private void healthCheck(InstancesConfig instancesConfig)
+    private void healthCheck(InstancesMetadata instancesMetadata)
     {
-        instancesConfig.instances()
-                       .forEach(instanceMetadata -> instanceMetadata.delegate().healthCheck());
+        instancesMetadata.instances()
+                         .forEach(instanceMetadata -> instanceMetadata.delegate().healthCheck());
     }
 
     protected CertificateBundle ca() throws Exception

@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.data.RestoreJobStatus;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
@@ -48,7 +48,7 @@ public class RestoreJobManagerGroup
 
     @Inject
     public RestoreJobManagerGroup(SidecarConfiguration configuration,
-                                  InstancesConfig instancesConfig,
+                                  InstancesMetadata instancesMetadata,
                                   ExecutorPools executorPools,
                                   PeriodicTaskExecutor periodicTaskExecutor,
                                   RestoreProcessor restoreProcessor,
@@ -58,7 +58,7 @@ public class RestoreJobManagerGroup
         this.restoreJobConfig = configuration.restoreJobConfiguration();
         this.restoreProcessor = restoreProcessor;
         this.executorPools = executorPools;
-        initializeManagers(instancesConfig);
+        initializeManagers(instancesMetadata);
         periodicTaskExecutor.schedule(jobDiscoverer);
         periodicTaskExecutor.schedule(restoreProcessor);
         periodicTaskExecutor.schedule(ringTopologyRefresher);
@@ -125,9 +125,9 @@ public class RestoreJobManagerGroup
     }
 
     // Create RestoreJobManager instances eagerly
-    private void initializeManagers(InstancesConfig instancesConfig)
+    private void initializeManagers(InstancesMetadata instancesMetadata)
     {
         // todo: allow register listener for instances list changes in the instancesConfig?
-        instancesConfig.instances().forEach(this::getManager);
+        instancesMetadata.instances().forEach(this::getManager);
     }
 }

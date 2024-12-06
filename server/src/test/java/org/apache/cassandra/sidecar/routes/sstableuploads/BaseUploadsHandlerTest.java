@@ -52,7 +52,7 @@ import org.apache.cassandra.sidecar.TestCassandraAdapterDelegate;
 import org.apache.cassandra.sidecar.TestModule;
 import org.apache.cassandra.sidecar.adapters.base.CassandraTableOperations;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.config.SSTableUploadConfiguration;
 import org.apache.cassandra.sidecar.config.ServiceConfiguration;
 import org.apache.cassandra.sidecar.config.SidecarConfiguration;
@@ -213,7 +213,7 @@ class BaseUploadsHandlerTest
 
         @Provides
         @Singleton
-        public InstancesConfig instancesConfig(Vertx vertx)
+        public InstancesMetadata instancesConfig(Vertx vertx)
         {
             return mockInstancesConfig(vertx, canonicalTemporaryPath, delegate, null);
         }

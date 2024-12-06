@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Maintains metadata of instances maintained by Sidecar.
  */
-public interface InstancesConfig
+public interface InstancesMetadata
 {
     /**
      * Returns metadata associated with the Cassandra instances managed by this Sidecar. The implementer

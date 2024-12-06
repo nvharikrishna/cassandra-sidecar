@@ -47,7 +47,7 @@ import io.vertx.core.net.SSLOptions;
 import io.vertx.core.net.TrafficShapingOptions;
 import io.vertx.ext.web.Router;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.utils.Preconditions;
 import org.apache.cassandra.sidecar.concurrent.ExecutorPools;
@@ -73,7 +73,7 @@ public class Server
     protected final Vertx vertx;
     protected final ExecutorPools executorPools;
     protected final SidecarConfiguration sidecarConfiguration;
-    protected final InstancesConfig instancesConfig;
+    protected final InstancesMetadata instancesMetadata;
     protected final Router router;
     protected final PeriodicTaskExecutor periodicTaskExecutor;
     protected final HttpServerOptionsProvider optionsProvider;
@@ -86,7 +86,7 @@ public class Server
     public Server(Vertx vertx,
                   SidecarConfiguration sidecarConfiguration,
                   Router router,
-                  InstancesConfig instancesConfig,
+                  InstancesMetadata instancesMetadata,
                   ExecutorPools executorPools,
                   PeriodicTaskExecutor periodicTaskExecutor,
                   HttpServerOptionsProvider optionsProvider,
@@ -95,7 +95,7 @@ public class Server
         this.vertx = vertx;
         this.executorPools = executorPools;
         this.sidecarConfiguration = sidecarConfiguration;
-        this.instancesConfig = instancesConfig;
+        this.instancesMetadata = instancesMetadata;
         this.router = router;
         this.periodicTaskExecutor = periodicTaskExecutor;
         this.optionsProvider = optionsProvider;
@@ -162,7 +162,7 @@ public class Server
         periodicTaskExecutor.close(periodicTaskExecutorPromise);
         closingFutures.add(periodicTaskExecutorPromise.future());
 
-        instancesConfig.instances().forEach(instance -> {
+        instancesMetadata.instances().forEach(instance -> {
             Promise<Void> closingFutureForInstance = Promise.promise();
             executorPools.internal()
                          .runBlocking(() -> {
@@ -304,7 +304,7 @@ public class Server
     {
         periodicTaskExecutor.schedule(new HealthCheckPeriodicTask(vertx,
                                                                   sidecarConfiguration,
-                                                                  instancesConfig,
+                                                                  instancesMetadata,
                                                                   executorPools,
                                                                   metrics));
         maybeScheduleKeyStoreCheckPeriodicTask();
@@ -347,9 +347,9 @@ public class Server
     {
         cqlReadyInstanceIds.add(message.body().getInteger("cassandraInstanceId"));
 
-        boolean isCqlReadyOnAllInstances = instancesConfig.instances().stream()
-                                                          .map(InstanceMetadata::id)
-                                                          .allMatch(cqlReadyInstanceIds::contains);
+        boolean isCqlReadyOnAllInstances = instancesMetadata.instances().stream()
+                                                            .map(InstanceMetadata::id)
+                                                            .allMatch(cqlReadyInstanceIds::contains);
         if (isCqlReadyOnAllInstances)
         {
             cqlReadyConsumer.unregister(); // stop listening to CQL ready events

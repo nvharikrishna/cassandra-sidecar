@@ -42,7 +42,7 @@ import com.datastax.driver.core.Host;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.server.cluster.locator.TokenRange;
 import org.apache.cassandra.sidecar.common.server.dns.DnsResolver;
@@ -55,7 +55,7 @@ import org.jetbrains.annotations.NotNull;
 public class CachedLocalTokenRanges implements LocalTokenRangesProvider
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLocalTokenRanges.class);
-    private final InstancesConfig instancesConfig;
+    private final InstancesMetadata instancesMetadata;
     private final DnsResolver dnsResolver;
 
     @GuardedBy("this")
@@ -67,9 +67,9 @@ public class CachedLocalTokenRanges implements LocalTokenRangesProvider
     @GuardedBy("this")
     private ImmutableMap<String, Map<Integer, Set<TokenRange>>> localTokenRangesCache;
 
-    public CachedLocalTokenRanges(InstancesConfig instancesConfig, DnsResolver dnsResolver)
+    public CachedLocalTokenRanges(InstancesMetadata instancesMetadata, DnsResolver dnsResolver)
     {
-        this.instancesConfig = instancesConfig;
+        this.instancesMetadata = instancesMetadata;
         this.dnsResolver = dnsResolver;
         this.localTokenRangesCache = null;
         this.localInstanceIdsCache = null;
@@ -80,7 +80,7 @@ public class CachedLocalTokenRanges implements LocalTokenRangesProvider
     @Override
     public Map<Integer, Set<TokenRange>> localTokenRanges(String keyspace)
     {
-        List<InstanceMetadata> localInstances = instancesConfig.instances();
+        List<InstanceMetadata> localInstances = instancesMetadata.instances();
 
         if (localInstances.isEmpty())
         {
