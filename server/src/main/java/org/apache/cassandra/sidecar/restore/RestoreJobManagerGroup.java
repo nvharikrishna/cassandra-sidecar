@@ -127,7 +127,7 @@ public class RestoreJobManagerGroup
     // Create RestoreJobManager instances eagerly
     private void initializeManagers(InstancesMetadata instancesMetadata)
     {
-        // todo: allow register listener for instances list changes in the instancesConfig?
+        // todo: allow register listener for instances list changes in the instancesMetadata?
         instancesMetadata.instances().forEach(this::getManager);
     }
 }

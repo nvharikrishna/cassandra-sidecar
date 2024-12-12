@@ -494,14 +494,14 @@ public class MainModule extends AbstractModule
 
     @Provides
     @Singleton
-    public InstancesMetadata instancesConfig(Vertx vertx,
-                                             SidecarConfiguration configuration,
-                                             CassandraVersionProvider cassandraVersionProvider,
-                                             SidecarVersionProvider sidecarVersionProvider,
-                                             DnsResolver dnsResolver,
-                                             CQLSessionProvider cqlSessionProvider,
-                                             DriverUtils driverUtils,
-                                             MetricRegistryFactory registryProvider)
+    public InstancesMetadata instancesMetadata(Vertx vertx,
+                                               SidecarConfiguration configuration,
+                                               CassandraVersionProvider cassandraVersionProvider,
+                                               SidecarVersionProvider sidecarVersionProvider,
+                                               DnsResolver dnsResolver,
+                                               CQLSessionProvider cqlSessionProvider,
+                                               DriverUtils driverUtils,
+                                               MetricRegistryFactory registryProvider)
     {
         List<InstanceMetadata> instanceMetadataList =
         configuration.cassandraInstances()

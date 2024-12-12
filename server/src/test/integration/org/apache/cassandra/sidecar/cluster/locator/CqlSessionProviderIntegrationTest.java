@@ -55,7 +55,7 @@ class CqlSessionProviderIntegrationTest extends IntegrationTestBase
         cassandraContext.configureAndStartCluster(builder -> {
             builder.appendConfig(config -> config.set("authenticator", "org.apache.cassandra.auth.PasswordAuthenticator"));
         });
-        sidecarTestContext.refreshInstancesConfig();
+        sidecarTestContext.refreshInstancesMetadata();
         waitForSchemaReady(30, TimeUnit.SECONDS);
         retrieveClientStats(context, "cassandra", false);
     }

@@ -60,7 +60,7 @@ import org.apache.cassandra.sidecar.snapshots.SnapshotUtils;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static org.apache.cassandra.sidecar.snapshots.SnapshotUtils.mockInstancesConfig;
+import static org.apache.cassandra.sidecar.snapshots.SnapshotUtils.mockInstancesMetadata;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -256,7 +256,7 @@ class ListSnapshotHandlerTest
     {
         @Provides
         @Singleton
-        public InstancesMetadata instancesConfig(Vertx vertx) throws IOException
+        public InstancesMetadata instancesMetadata(Vertx vertx) throws IOException
         {
             CQLSessionProvider mockSession1 = mock(CQLSessionProviderImpl.class);
             TableOperations mockTableOperations = mock(TableOperations.class);
@@ -264,7 +264,7 @@ class ListSnapshotHandlerTest
             .thenReturn(Collections.singletonList(canonicalTemporaryPath + "/d1/data/keyspace1/table1-1234"));
             CassandraAdapterDelegate mockDelegate = mock(CassandraAdapterDelegate.class);
             when(mockDelegate.tableOperations()).thenReturn(mockTableOperations);
-            return mockInstancesConfig(vertx, canonicalTemporaryPath, mockDelegate, mockSession1);
+            return mockInstancesMetadata(vertx, canonicalTemporaryPath, mockDelegate, mockSession1);
         }
     }
 }

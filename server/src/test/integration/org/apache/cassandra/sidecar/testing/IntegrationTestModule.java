@@ -82,7 +82,7 @@ public class IntegrationTestModule extends AbstractModule
 
     @Provides
     @Singleton
-    public InstancesMetadata instancesConfig()
+    public InstancesMetadata instancesMetadata()
     {
         return new WrapperInstancesMetadata();
     }
@@ -181,7 +181,7 @@ public class IntegrationTestModule extends AbstractModule
         public List<InstanceMetadata> instances()
         {
             if (cassandraTestContext != null && cassandraTestContext.isClusterBuilt())
-                return cassandraTestContext.instancesConfig().instances();
+                return cassandraTestContext.instancesMetadata().instances();
             return Collections.emptyList();
         }
 
@@ -195,7 +195,7 @@ public class IntegrationTestModule extends AbstractModule
         @Override
         public InstanceMetadata instanceFromId(int id) throws NoSuchSidecarInstanceException
         {
-            return cassandraTestContext.instancesConfig().instanceFromId(id);
+            return cassandraTestContext.instancesMetadata().instanceFromId(id);
         }
 
         /**
@@ -208,7 +208,7 @@ public class IntegrationTestModule extends AbstractModule
         @Override
         public InstanceMetadata instanceFromHost(String host) throws NoSuchSidecarInstanceException
         {
-            return cassandraTestContext.instancesConfig().instanceFromHost(host);
+            return cassandraTestContext.instancesMetadata().instanceFromHost(host);
         }
     }
 }

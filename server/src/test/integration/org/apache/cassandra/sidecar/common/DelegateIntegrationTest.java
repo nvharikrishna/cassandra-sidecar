@@ -69,7 +69,7 @@ class DelegateIntegrationTest extends IntegrationTestBase
     @CassandraIntegrationTest()
     void testCorrectVersionIsEnabled()
     {
-        CassandraAdapterDelegate delegate = sidecarTestContext.instancesConfig()
+        CassandraAdapterDelegate delegate = sidecarTestContext.instancesMetadata()
                                                               .instanceFromId(1)
                                                               .delegate();
         assertThat(delegate).isNotNull();
@@ -87,7 +87,7 @@ class DelegateIntegrationTest extends IntegrationTestBase
         Checkpoint cqlReady = context.checkpoint();
         Checkpoint cqlDisconnected = context.checkpoint();
 
-        CassandraAdapterDelegate adapterDelegate = sidecarTestContext.instancesConfig()
+        CassandraAdapterDelegate adapterDelegate = sidecarTestContext.instancesMetadata()
                                                                      .instanceFromId(1)
                                                                      .delegate();
         assertThat(adapterDelegate).isNotNull();
@@ -98,7 +98,7 @@ class DelegateIntegrationTest extends IntegrationTestBase
         // where the event happens before the consumer is registered.
         eventBus.localConsumer(ON_CASSANDRA_CQL_DISCONNECTED.address(), (Message<JsonObject> message) -> {
             int instanceId = message.body().getInteger("cassandraInstanceId");
-            CassandraAdapterDelegate delegate = sidecarTestContext.instancesConfig()
+            CassandraAdapterDelegate delegate = sidecarTestContext.instancesMetadata()
                                                                   .instanceFromId(instanceId)
                                                                   .delegate();
 
@@ -110,7 +110,7 @@ class DelegateIntegrationTest extends IntegrationTestBase
 
         eventBus.localConsumer(ON_CASSANDRA_CQL_READY.address(), (Message<JsonObject> reconnectMessage) -> {
             int instanceId = reconnectMessage.body().getInteger("cassandraInstanceId");
-            CassandraAdapterDelegate delegate = sidecarTestContext.instancesConfig()
+            CassandraAdapterDelegate delegate = sidecarTestContext.instancesMetadata()
                                                                   .instanceFromId(instanceId)
                                                                   .delegate();
             assertThat(delegate).isNotNull();

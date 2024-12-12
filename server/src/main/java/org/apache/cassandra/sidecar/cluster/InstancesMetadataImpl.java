@@ -31,7 +31,7 @@ import org.apache.cassandra.sidecar.exceptions.NoSuchSidecarInstanceException;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Local implementation of InstancesConfig.
+ * Local implementation of InstancesMetadata.
  */
 public class InstancesMetadataImpl implements InstancesMetadata
 {

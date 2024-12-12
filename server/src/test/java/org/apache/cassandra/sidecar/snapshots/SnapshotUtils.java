@@ -101,16 +101,16 @@ public class SnapshotUtils
                    .setLastModified(System.currentTimeMillis() + 2_000_000)).isTrue();
     }
 
-    public static InstancesMetadata mockInstancesConfig(Vertx vertx, String rootPath)
+    public static InstancesMetadata mockInstancesMetadata(Vertx vertx, String rootPath)
     {
         CQLSessionProvider mockSession1 = mock(CQLSessionProviderImpl.class);
-        return mockInstancesConfig(vertx, rootPath, null, mockSession1);
+        return mockInstancesMetadata(vertx, rootPath, null, mockSession1);
     }
 
-    public static InstancesMetadata mockInstancesConfig(Vertx vertx,
-                                                        String rootPath,
-                                                        CassandraAdapterDelegate delegate,
-                                                        CQLSessionProvider cqlSessionProvider1)
+    public static InstancesMetadata mockInstancesMetadata(Vertx vertx,
+                                                          String rootPath,
+                                                          CassandraAdapterDelegate delegate,
+                                                          CQLSessionProvider cqlSessionProvider1)
     {
         CassandraVersionProvider.Builder versionProviderBuilder = new CassandraVersionProvider.Builder();
         versionProviderBuilder.add(new MockCassandraFactory());

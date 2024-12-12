@@ -71,7 +71,7 @@ public class SidecarLoadBalancingPolicyTest extends IntegrationTestBase
         assertThat(connectedHosts.size()).isEqualTo(expectedConnections);
         // Now, shut down one of the hosts and make sure that we connect to a different node
         UpgradeableCluster cluster = sidecarTestContext.cluster();
-        IUpgradeableInstance inst = shutDownNonLocalInstance(cluster, sidecarTestContext.instancesConfig().instances());
+        IUpgradeableInstance inst = shutDownNonLocalInstance(cluster, sidecarTestContext.instancesMetadata().instances());
         assertThat(inst.isShutdown()).isTrue();
         InetSocketAddress downInstanceAddress = new InetSocketAddress(inst.broadcastAddress().getAddress(),
                                                                       inst.config().getInt("native_transport_port"));

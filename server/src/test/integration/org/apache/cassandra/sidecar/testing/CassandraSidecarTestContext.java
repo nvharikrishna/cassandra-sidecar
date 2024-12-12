@@ -71,7 +71,7 @@ public class CassandraSidecarTestContext implements AutoCloseable
     private final DnsResolver dnsResolver;
     private final AbstractCassandraTestContext abstractCassandraTestContext;
     private final Vertx vertx;
-    private final List<InstanceConfigListener> instanceConfigListeners;
+    private final List<InstancesMetadataListener> instancesMetadataListeners;
     private int numInstancesToManage;
     public InstancesMetadata instancesMetadata;
     private List<JmxClient> jmxClients;
@@ -90,7 +90,7 @@ public class CassandraSidecarTestContext implements AutoCloseable
     {
         this.vertx = vertx;
         this.numInstancesToManage = numInstancesToManage;
-        this.instanceConfigListeners = new ArrayList<>();
+        this.instancesMetadataListeners = new ArrayList<>();
         this.abstractCassandraTestContext = abstractCassandraTestContext;
         this.version = version;
         this.versionProvider = versionProvider;
@@ -139,9 +139,9 @@ public class CassandraSidecarTestContext implements AutoCloseable
         }
     }
 
-    public void registerInstanceConfigListener(InstanceConfigListener listener)
+    public void registerInstanceConfigListener(InstancesMetadataListener listener)
     {
-        this.instanceConfigListeners.add(listener);
+        this.instancesMetadataListeners.add(listener);
     }
 
     public AbstractCassandraTestContext cassandraTestContext()
@@ -167,36 +167,36 @@ public class CassandraSidecarTestContext implements AutoCloseable
     public void setNumInstancesToManage(int numInstancesToManage)
     {
         this.numInstancesToManage = numInstancesToManage;
-        refreshInstancesConfig();
+        refreshInstancesMetadata();
     }
 
     public void setUsernamePassword(String username, String password)
     {
         this.username = username;
         this.password = password;
-        refreshInstancesConfig();
+        refreshInstancesMetadata();
     }
 
     public void setSslConfiguration(SslConfiguration sslConfiguration)
     {
         this.sslConfiguration = sslConfiguration;
-        refreshInstancesConfig();
+        refreshInstancesMetadata();
     }
 
-    public InstancesMetadata instancesConfig()
+    public InstancesMetadata instancesMetadata()
     {
         if (instancesMetadata == null)
         {
-            refreshInstancesConfig();
+            refreshInstancesMetadata();
         }
         return this.instancesMetadata;
     }
 
-    public InstancesMetadata refreshInstancesConfig()
+    public InstancesMetadata refreshInstancesMetadata()
     {
         // clean-up any open sessions or client resources
         close();
-        setInstancesConfig();
+        setInstancesMetadata();
         return this.instancesMetadata;
     }
 
@@ -233,17 +233,17 @@ public class CassandraSidecarTestContext implements AutoCloseable
         }
     }
 
-    private void setInstancesConfig()
+    private void setInstancesMetadata()
     {
-        this.instancesMetadata = buildInstancesConfig(versionProvider, dnsResolver);
-        for (InstanceConfigListener listener : instanceConfigListeners)
+        this.instancesMetadata = buildInstancesMetadata(versionProvider, dnsResolver);
+        for (InstancesMetadataListener listener : instancesMetadataListeners)
         {
-            listener.onInstancesConfigChange(this.instancesMetadata);
+            listener.onInstancesMetadataChange(this.instancesMetadata);
         }
     }
 
-    private InstancesMetadata buildInstancesConfig(CassandraVersionProvider versionProvider,
-                                                   DnsResolver dnsResolver)
+    private InstancesMetadata buildInstancesMetadata(CassandraVersionProvider versionProvider,
+                                                     DnsResolver dnsResolver)
     {
         UpgradeableCluster cluster = cluster();
         List<InstanceMetadata> metadata = new ArrayList<>();
@@ -342,8 +342,8 @@ public class CassandraSidecarTestContext implements AutoCloseable
     /**
      * A listener for {@link InstancesMetadata} state changes
      */
-    public interface InstanceConfigListener
+    public interface InstancesMetadataListener
     {
-        void onInstancesConfigChange(InstancesMetadata instancesMetadata);
+        void onInstancesMetadataChange(InstancesMetadata instancesMetadata);
     }
 }

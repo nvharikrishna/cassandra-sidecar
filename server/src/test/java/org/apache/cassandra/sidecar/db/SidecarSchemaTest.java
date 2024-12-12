@@ -254,7 +254,7 @@ public class SidecarSchemaTest
 
         @Provides
         @Singleton
-        public InstancesMetadata instancesConfig()
+        public InstancesMetadata instancesMetadata()
         {
             InstanceMetadata instanceMeta = mock(InstanceMetadata.class);
             when(instanceMeta.stagingDir()).thenReturn("/tmp/staging"); // not an actual file

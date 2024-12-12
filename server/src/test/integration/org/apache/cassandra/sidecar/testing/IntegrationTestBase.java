@@ -205,7 +205,7 @@ public abstract class IntegrationTestBase
                                   Consumer<WebClient> tester)
     throws Exception
     {
-        CassandraAdapterDelegate delegate = sidecarTestContext.instancesConfig()
+        CassandraAdapterDelegate delegate = sidecarTestContext.instancesMetadata()
                                                               .instanceFromId(1)
                                                               .delegate();
 
@@ -241,7 +241,7 @@ public abstract class IntegrationTestBase
         {
             try
             {
-                sidecarTestContext.refreshInstancesConfig();
+                sidecarTestContext.refreshInstancesMetadata();
 
                 Session session = maybeGetSession();
 
@@ -369,7 +369,7 @@ public abstract class IntegrationTestBase
      */
     public List<Path> findChildFile(CassandraSidecarTestContext context, String hostname, String keyspaceName, String target)
     {
-        InstanceMetadata instanceConfig = context.instancesConfig().instanceFromHost(hostname);
+        InstanceMetadata instanceConfig = context.instancesMetadata().instanceFromHost(hostname);
         List<String> parentDirectories = instanceConfig.dataDirs();
 
         return parentDirectories.stream()

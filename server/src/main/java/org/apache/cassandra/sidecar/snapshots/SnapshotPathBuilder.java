@@ -55,7 +55,7 @@ public class SnapshotPathBuilder extends BaseFileSystem
 
     /**
      * Creates a new SnapshotPathBuilder for snapshots of an instance with the given {@code vertx} instance and
-     * {@code instancesConfig Cassandra configuration}.
+     * {@code instancesMetadata Cassandra configuration}.
      *
      * @param vertx           the vertx instance
      * @param instancesMetadata the configuration for Cassandra

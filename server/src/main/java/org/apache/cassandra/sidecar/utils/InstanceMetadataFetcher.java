@@ -102,7 +102,7 @@ public class InstanceMetadataFetcher
      */
     public InstanceMetadata firstInstance()
     {
-        ensureInstancesConfigured();
+        ensureInstancesMetadataConfigured();
         return instancesMetadata.instances().get(0);
     }
 
@@ -112,7 +112,7 @@ public class InstanceMetadataFetcher
      */
     public InstanceMetadata anyInstance()
     {
-        ensureInstancesConfigured();
+        ensureInstancesMetadataConfigured();
         List<InstanceMetadata> instances = instancesMetadata.instances();
         if (instances.size() == 1)
         {
@@ -123,7 +123,7 @@ public class InstanceMetadataFetcher
         return instances.get(randomPick);
     }
 
-    private void ensureInstancesConfigured()
+    private void ensureInstancesMetadataConfigured()
     {
         if (instancesMetadata.instances().isEmpty())
         {

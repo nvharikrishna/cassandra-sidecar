@@ -100,7 +100,7 @@ public class SSTableImportHandlerIntegrationTest extends IntegrationTestBase
         // verification happens in the host system. When calling import we use the same directory, but the
         // directory does not exist inside the cluster. For that reason we need to do the following to
         // ensure "import" finds the path inside the cluster
-        String uploadStagingDir = sidecarTestContext.instancesConfig()
+        String uploadStagingDir = sidecarTestContext.instancesMetadata()
                                                     .instanceFromHost("127.0.0.1").stagingDir();
         final String stagingPathInContainer = uploadStagingDir + File.separator + uploadId
                                               + File.separator + tableName.keyspace()

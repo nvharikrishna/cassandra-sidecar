@@ -150,7 +150,7 @@ public class TestModule extends AbstractModule
 
     @Provides
     @Singleton
-    public InstancesMetadata instancesConfig(DnsResolver dnsResolver)
+    public InstancesMetadata instancesMetadata(DnsResolver dnsResolver)
     {
         return new InstancesMetadataImpl(instancesMetas(), dnsResolver);
     }
