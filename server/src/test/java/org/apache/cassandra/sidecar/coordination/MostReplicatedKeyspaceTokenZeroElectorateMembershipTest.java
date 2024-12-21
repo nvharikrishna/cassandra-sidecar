@@ -26,7 +26,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.common.response.NodeSettings;
 import org.apache.cassandra.sidecar.common.server.CQLSessionProvider;
@@ -45,11 +45,11 @@ class MostReplicatedKeyspaceTokenZeroElectorateMembershipTest
     private static final SidecarConfigurationImpl CONFIG = new SidecarConfigurationImpl();
 
     @Test
-    void testEmptyInstancesConfig()
+    void testEmptyInstancesMetadata()
     {
-        InstancesConfig mockInstancesConfig = mock(InstancesConfig.class);
-        when(mockInstancesConfig.instances()).thenReturn(Collections.emptyList());
-        ElectorateMembership membership = new MostReplicatedKeyspaceTokenZeroElectorateMembership(mockInstancesConfig, null, CONFIG);
+        InstancesMetadata mockInstancesMetadata = mock(InstancesMetadata.class);
+        when(mockInstancesMetadata.instances()).thenReturn(Collections.emptyList());
+        ElectorateMembership membership = new MostReplicatedKeyspaceTokenZeroElectorateMembership(mockInstancesMetadata, null, CONFIG);
         assertThat(membership.isMember()).as("When no local instances are managed by Sidecar, we can't determine participation")
                                          .isFalse();
     }
@@ -57,18 +57,18 @@ class MostReplicatedKeyspaceTokenZeroElectorateMembershipTest
     @Test
     void testCqlSessionIsNotActive() throws UnknownHostException
     {
-        InstancesConfig mockInstancesConfig = mock(InstancesConfig.class);
+        InstancesMetadata mockInstancesMetadata = mock(InstancesMetadata.class);
         InstanceMetadata instanceMetadata = mock(InstanceMetadata.class);
         CassandraAdapterDelegate mockCassandraAdapterDelegate = mock(CassandraAdapterDelegate.class);
         when(mockCassandraAdapterDelegate.localStorageBroadcastAddress()).thenReturn(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), 8888));
         when(mockCassandraAdapterDelegate.storageOperations()).thenReturn(mock(StorageOperations.class));
         when(mockCassandraAdapterDelegate.nodeSettings()).thenReturn(mock(NodeSettings.class));
         when(instanceMetadata.delegate()).thenReturn(mockCassandraAdapterDelegate);
-        when(mockInstancesConfig.instances()).thenReturn(Collections.singletonList(instanceMetadata));
+        when(mockInstancesMetadata.instances()).thenReturn(Collections.singletonList(instanceMetadata));
         CQLSessionProvider mockCQLSessionProvider = mock(CQLSessionProvider.class);
         // the session is not available so we return null
         when(mockCQLSessionProvider.get()).thenReturn(null);
-        ElectorateMembership membership = new MostReplicatedKeyspaceTokenZeroElectorateMembership(mockInstancesConfig, mockCQLSessionProvider, CONFIG);
+        ElectorateMembership membership = new MostReplicatedKeyspaceTokenZeroElectorateMembership(mockInstancesMetadata, mockCQLSessionProvider, CONFIG);
         assertThat(membership.isMember()).as("When the CQL connection is unavailable, we can't determine participation")
                                          .isFalse();
     }

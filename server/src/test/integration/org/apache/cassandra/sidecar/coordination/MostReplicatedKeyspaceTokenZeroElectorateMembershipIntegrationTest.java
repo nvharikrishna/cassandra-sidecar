@@ -43,8 +43,8 @@ import org.apache.cassandra.distributed.shared.JMXUtil;
 import org.apache.cassandra.distributed.shared.Versions;
 import org.apache.cassandra.sidecar.cluster.CQLSessionProviderImpl;
 import org.apache.cassandra.sidecar.cluster.CassandraAdapterDelegate;
-import org.apache.cassandra.sidecar.cluster.InstancesConfig;
-import org.apache.cassandra.sidecar.cluster.InstancesConfigImpl;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadata;
+import org.apache.cassandra.sidecar.cluster.InstancesMetadataImpl;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadata;
 import org.apache.cassandra.sidecar.cluster.instance.InstanceMetadataImpl;
 import org.apache.cassandra.sidecar.common.server.CQLSessionProvider;
@@ -168,15 +168,15 @@ class MostReplicatedKeyspaceTokenZeroElectorateMembershipIntegrationTest
             List<InetSocketAddress> address = buildContactList(instance);
             CQLSessionProvider sessionProvider =
             new CQLSessionProviderImpl(address, address, 500, instance.config().localDatacenter(), 0, SharedExecutorNettyOptions.INSTANCE);
-            InstancesConfig instancesConfig = buildInstancesConfig(instance, sessionProvider, metricRegistryProvider);
-            result.add(new MostReplicatedKeyspaceTokenZeroElectorateMembership(instancesConfig, sessionProvider, CONFIG));
+            InstancesMetadata instancesMetadata = buildInstancesMetadata(instance, sessionProvider, metricRegistryProvider);
+            result.add(new MostReplicatedKeyspaceTokenZeroElectorateMembership(instancesMetadata, sessionProvider, CONFIG));
         }
         return result;
     }
 
-    private InstancesConfig buildInstancesConfig(IInstance instance,
-                                                 CQLSessionProvider sessionProvider,
-                                                 MetricRegistryFactory metricRegistryProvider)
+    private InstancesMetadata buildInstancesMetadata(IInstance instance,
+                                                     CQLSessionProvider sessionProvider,
+                                                     MetricRegistryFactory metricRegistryProvider)
     {
         IInstanceConfig config = instance.config();
         MetricRegistry instanceSpecificRegistry = metricRegistryProvider.getOrCreate(config.num());
@@ -216,7 +216,7 @@ class MostReplicatedKeyspaceTokenZeroElectorateMembershipIntegrationTest
                                                       .delegate(delegate)
                                                       .metricRegistry(instanceSpecificRegistry)
                                                       .build());
-        return new InstancesConfigImpl(metadata, DnsResolver.DEFAULT);
+        return new InstancesMetadataImpl(metadata, DnsResolver.DEFAULT);
     }
 
     void initializeSchema(AbstractCluster<?> cluster)

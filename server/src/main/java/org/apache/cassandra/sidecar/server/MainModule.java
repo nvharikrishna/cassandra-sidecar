@@ -682,11 +682,11 @@ public class MainModule extends AbstractModule
 
     @Provides
     @Singleton
-    public ElectorateMembership electorateMembership(InstancesConfig instancesConfig,
+    public ElectorateMembership electorateMembership(InstancesMetadata instancesMetadata,
                                                      CQLSessionProvider cqlSessionProvider,
                                                      SidecarConfiguration configuration)
     {
-        return new MostReplicatedKeyspaceTokenZeroElectorateMembership(instancesConfig, cqlSessionProvider, configuration);
+        return new MostReplicatedKeyspaceTokenZeroElectorateMembership(instancesMetadata, cqlSessionProvider, configuration);
     }
 
     @Provides
